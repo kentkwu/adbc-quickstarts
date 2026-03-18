@@ -16,8 +16,8 @@ import { AdbcDatabase } from '@apache-arrow/adbc-driver-manager';
 import { resolve } from 'node:path';
 
 const db = new AdbcDatabase({
-  driver: 'sqlite',
-  databaseOptions: { uri: resolve(import.meta.dirname, 'games.sqlite') },
+  driver: 'duckdb',
+  databaseOptions: { path: resolve(import.meta.dirname, 'games.duckdb') },
 });
 
 let conn;

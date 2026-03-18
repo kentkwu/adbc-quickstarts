@@ -13,17 +13,16 @@
 // limitations under the License.
 
 import { AdbcDatabase } from '@apache-arrow/adbc-driver-manager';
-import { resolve } from 'node:path';
 
 const db = new AdbcDatabase({
-  driver: 'sqlite',
-  databaseOptions: { uri: resolve(import.meta.dirname, 'games.sqlite') },
+  driver: 'duckdb',
+  databaseOptions: { path: 'md:sample_data' },
 });
 
 let conn;
 try {
   conn = await db.connect();
-  const table = await conn.query('SELECT * FROM games;');
+  const table = await conn.query('SELECT title FROM kaggle.movies LIMIT 10;');
   console.log(table.toString());
 } finally {
   await conn?.close();
