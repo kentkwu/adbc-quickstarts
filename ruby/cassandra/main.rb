@@ -12,29 +12,23 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-[workspace]
-resolver = "3"
-members = [
-    "bigquery",
-    "cassandra",
-    "chdb",
-    "clickhouse",
-    "databricks",
-    "datafusion",
-    "duckdb/*",
-    "exasol",
-    "flightsql/*",
-    "mssql",
-    "mysql/*",
-    "oracle",
-    "postgresql/*",
-    "presto",
-    "quack",
-    "redshift",
-    "singlestore",
-    "snowflake",
-    "spark",
-    "sqlite",
-    "teradata",
-    "trino",
-]
+require "adbc"
+
+database = ADBC::Database.new
+
+begin
+  database.set_option("driver", "cassandra")
+  database.set_option("uri", "cassandra://localhost:9042")
+  database.set_load_flags(ADBC::LoadFlags::DEFAULT)
+  database.init
+
+  database.connect do |connection|
+    table, = connection.query(<<~SQL)
+      SELECT cluster_name, release_version
+      FROM system.local
+    SQL
+    puts(table)
+  end
+ensure
+  database.release
+end
